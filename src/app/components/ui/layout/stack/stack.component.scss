@@ -1,0 +1,88 @@
+// Stack Component Styles - Following BracketAce Design System
+@use '../../../../styles/design-tokens.scss' as *;
+
+.stack {
+  display: flex;
+  
+  &.stack-full-width {
+    width: 100%;
+  }
+  
+  &.stack-full-height {
+    height: 100%;
+  }
+  
+  &.stack-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+// === DIRECTION VARIANTS ===
+.stack-horizontal {
+  flex-direction: row;
+}
+
+.stack-vertical {
+  flex-direction: column;
+}
+
+// === ALIGNMENT VARIANTS ===
+.stack-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.stack-start {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.stack-end {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.stack-between {
+  justify-content: space-between;
+}
+
+.stack-around {
+  justify-content: space-around;
+}
+
+// === SPACING VARIANTS ===
+.stack-gap-1 {
+  gap: var(--space-1);
+}
+
+.stack-gap-2 {
+  gap: var(--space-2);
+}
+
+.stack-gap-3 {
+  gap: var(--space-3);
+}
+
+.stack-gap-4 {
+  gap: var(--space-4);
+}
+
+.stack-gap-6 {
+  gap: var(--space-6);
+}
+
+.stack-gap-8 {
+  gap: var(--space-8);
+}
+
+// === RESPONSIVE VARIANTS ===
+@media (max-width: 768px) {
+  .stack-mobile-vertical {
+    flex-direction: column;
+  }
+  
+  .stack-mobile-center {
+    align-items: center;
+    text-align: center;
+  }
+}

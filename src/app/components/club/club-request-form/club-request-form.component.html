@@ -1,0 +1,71 @@
+<div class="club-request-container">
+  <div class="request-form-card">
+    <h2>Request New Club Creation</h2>
+    <p class="subtitle">Submit a request to create a new club. A superadmin will review your request.</p>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+      <!-- Club Name -->
+      <div class="form-group">
+        <label for="name">Club Name *</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="Enter club name"
+          maxlength="200"
+        />
+        <div *ngIf="requestForm.get('name')?.invalid && requestForm.get('name')?.touched" class="error-text">
+          <span *ngIf="requestForm.get('name')?.hasError('required')">Club name is required</span>
+          <span *ngIf="requestForm.get('name')?.hasError('maxlength')">Club name must be less than 200 characters</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description (Optional)</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Describe your club (optional)"
+          rows="4"
+          maxlength="500"
+        ></textarea>
+        <div class="character-count">
+          {{ requestForm.get('description')?.value?.length || 0 }} / 500
+        </div>
+        <div *ngIf="requestForm.get('description')?.invalid && requestForm.get('description')?.touched" class="error-text">
+          <span *ngIf="requestForm.get('description')?.hasError('maxlength')">Description must be less than 500 characters</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="requestForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

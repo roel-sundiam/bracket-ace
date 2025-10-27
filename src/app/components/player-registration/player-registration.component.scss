@@ -1,0 +1,297 @@
+// Player Registration Component Styles - Following BracketAce Design System
+@use '../../styles/design-tokens.scss' as *;
+
+.registration-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+// === CARD STYLING ===
+.registration-form-card,
+.participants-list-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: var(--space-8);
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.card-header {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.registration-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--neutral-900);
+  margin: 0 0 var(--space-2) 0;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+  line-height: var(--leading-tight);
+}
+
+.registration-subtitle {
+  font-size: var(--text-lg);
+  color: var(--neutral-700);
+  margin: 0;
+  font-weight: var(--font-medium);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.participants-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  color: var(--neutral-900);
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.participants-count {
+  font-size: var(--text-sm);
+  color: var(--primary-600);
+  font-weight: var(--font-semibold);
+  background: rgba(76, 175, 80, 0.1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+// === FORM STYLING ===
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.player-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.player-field {
+  width: 100%;
+}
+
+.register-button,
+.start-tournament-button {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  min-height: 44px; // Accessibility touch target
+  border-radius: var(--radius-md);
+  
+  mat-icon {
+    margin-right: var(--space-2);
+  }
+}
+
+.start-tournament-button {
+  background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+  color: white;
+  box-shadow: 0 4px 16px rgba(255, 152, 0, 0.3);
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--secondary-600), var(--secondary-700));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+  }
+}
+
+// === ERROR & STATUS STYLING ===
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--error);
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-medium);
+}
+
+.registration-status {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--neutral-600);
+  font-weight: var(--font-medium);
+  
+  &.status-complete {
+    color: var(--success);
+    
+    mat-icon {
+      color: var(--success);
+    }
+  }
+}
+
+// === PARTICIPANTS LIST ===
+.participants-list {
+  max-height: 400px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-sm);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+.participant-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+  }
+  
+  mat-icon {
+    color: var(--primary-500);
+  }
+}
+
+.team-item {
+  mat-icon {
+    color: var(--secondary-500);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--neutral-500);
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--space-4);
+    color: var(--neutral-400);
+  }
+  
+  p {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-medium);
+  }
+}
+
+// === RESPONSIVE DESIGN ===
+@media (max-width: 1024px) {
+  .registration-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .registration-container {
+    padding: var(--space-4);
+  }
+  
+  .registration-form-card,
+  .participants-list-card {
+    padding: var(--space-6);
+  }
+  
+  .registration-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .registration-subtitle {
+    font-size: var(--text-base);
+  }
+  
+  .player-inputs {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .participants-list {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-form-card,
+  .participants-list-card {
+    padding: var(--space-4);
+  }
+  
+  .registration-title {
+    font-size: var(--text-xl);
+  }
+  
+  .card-header {
+    margin-bottom: var(--space-4);
+  }
+}
+
+// === HIGH CONTRAST MODE ===
+@media (prefers-contrast: high) {
+  .registration-form-card,
+  .participants-list-card {
+    border: 2px solid var(--neutral-600);
+  }
+  
+  .participant-item {
+    border: 2px solid var(--neutral-400);
+  }
+  
+  .error-message {
+    border: 2px solid var(--error);
+  }
+}
+
+// === REDUCED MOTION ===
+@media (prefers-reduced-motion: reduce) {
+  .registration-form-card,
+  .participants-list-card,
+  .participant-item {
+    transition: none;
+  }
+}

@@ -1,0 +1,214 @@
+// Card Component Styles - Following BracketAce Design System
+@use '../../../styles/design-tokens.scss' as *;
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--neutral-200);
+  
+  // Full width variant
+  &.card-full-width {
+    width: 100%;
+  }
+  
+  // Loading state
+  &.card-loading {
+    opacity: 0.7;
+    pointer-events: none;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--primary-500),
+        transparent
+      );
+      animation: loading-sweep 1.5s infinite;
+    }
+  }
+}
+
+// === VARIANTS ===
+
+// Default Card
+.card-default {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  &:hover.card-clickable {
+    border-color: var(--neutral-300);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+// Elevated Card
+.card-elevated {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+  
+  &:hover.card-clickable {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 6px 15px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+// Outlined Card
+.card-outlined {
+  border: 2px solid var(--neutral-300);
+  box-shadow: none;
+  
+  &:hover.card-clickable {
+    border-color: var(--primary-400);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+  }
+}
+
+// Ghost Card
+.card-ghost {
+  border: 1px solid var(--neutral-200);
+  box-shadow: none;
+  background: var(--neutral-50);
+  
+  &:hover.card-clickable {
+    border-color: var(--neutral-300);
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// === CARD STRUCTURE ===
+
+.card-header {
+  padding: var(--space-6) var(--space-6) 0;
+  
+  .card-title {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    line-height: var(--leading-tight);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+  
+  .card-subtitle {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    line-height: var(--leading-normal);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.card-content {
+  padding: var(--space-6);
+  
+  &.card-content-no-header {
+    padding-top: var(--space-6);
+  }
+  
+  // Remove default margins from first and last elements
+  > *:first-child {
+    margin-top: 0;
+  }
+  
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.card-footer {
+  padding: 0 var(--space-6) var(--space-6);
+  border-top: 1px solid var(--neutral-200);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  
+  // Common footer layouts
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+// === CLICKABLE CARD ===
+.card-clickable {
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  
+  &:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// === LOADING ANIMATION ===
+@keyframes loading-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// === RESPONSIVE DESIGN ===
+@media (max-width: 768px) {
+  .card-header {
+    padding: var(--space-4) var(--space-4) 0;
+    
+    .card-title {
+      font-size: var(--text-lg);
+    }
+  }
+  
+  .card-content {
+    padding: var(--space-4);
+    
+    &.card-content-no-header {
+      padding-top: var(--space-4);
+    }
+  }
+  
+  .card-footer {
+    padding: 0 var(--space-4) var(--space-4);
+    
+    // Stack footer items on mobile
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+}
+
+// === HIGH CONTRAST MODE ===
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid var(--neutral-800);
+  }
+  
+  .card-ghost {
+    background: white;
+    border: 2px solid var(--neutral-600);
+  }
+}
+
+// === REDUCED MOTION ===
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+  
+  .card-loading::after {
+    animation: none;
+  }
+}

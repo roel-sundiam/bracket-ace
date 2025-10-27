@@ -1,0 +1,137 @@
+<div class="club-requests-container">
+  <div class="header">
+    <h2>Club Creation Requests</h2>
+    <p>Review and manage club creation requests from members</p>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-section">
+    <label for="statusFilter">Filter by status:</label>
+    <select id="statusFilter" [(ngModel)]="filterStatus" (change)="onFilterChange()">
+      <option value="all">All Requests</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    Loading club requests...
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredRequests.length === 0" class="empty-state">
+    <p>No club requests found.</p>
+  </div>
+
+  <!-- Requests Table -->
+  <div *ngIf="!isLoading && filteredRequests.length > 0" class="requests-table-container">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>Club Name</th>
+          <th>Description</th>
+          <th>Requested By</th>
+          <th>Requested At</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of filteredRequests">
+          <td class="club-name">{{ request.name }}</td>
+          <td class="description">
+            {{ request.description || 'No description' }}
+          </td>
+          <td>
+            <div class="user-info">
+              <div>{{ request.requestedBy.firstName }} {{ request.requestedBy.lastName }}</div>
+              <div class="email">{{ request.requestedBy.email }}</div>
+            </div>
+          </td>
+          <td>{{ formatDate(request.createdAt) }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+              {{ request.status }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <button
+                *ngIf="request.status === 'pending'"
+                class="btn btn-approve"
+                (click)="openApproveModal(request.id, request.name)"
+              >
+                Approve
+              </button>
+              <button
+                *ngIf="request.status === 'pending'"
+                class="btn btn-reject"
+                (click)="openRejectModal(request.id)"
+              >
+                Reject
+              </button>
+              <div *ngIf="request.status !== 'pending'" class="reviewed-info">
+                <div *ngIf="request.reviewedBy">
+                  Reviewed by {{ request.reviewedBy.firstName }} {{ request.reviewedBy.lastName }}
+                </div>
+                <div *ngIf="request.reviewedAt" class="review-date">
+                  {{ formatDate(request.reviewedAt) }}
+                </div>
+                <div *ngIf="request.status === 'rejected' && request.rejectionReason" class="rejection-reason">
+                  Reason: {{ request.rejectionReason }}
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Approve Confirmation Modal -->
+  <app-confirmation-modal
+    [isOpen]="showApproveModal"
+    [title]="'Approve Club Request'"
+    [message]="getApproveMessage()"
+    [confirmText]="'Approve'"
+    [cancelText]="'Cancel'"
+    [variant]="'primary'"
+    [isProcessing]="isApproving"
+    (confirm)="confirmApprove()"
+    (cancel)="closeApproveModal()">
+  </app-confirmation-modal>
+
+  <!-- Reject Modal -->
+  <div *ngIf="showRejectModal" class="modal-overlay" (click)="closeRejectModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Reject Club Request</h3>
+        <button class="close-btn" (click)="closeRejectModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="rejectionReason">Rejection Reason (Optional):</label>
+        <textarea
+          id="rejectionReason"
+          [(ngModel)]="rejectionReason"
+          placeholder="Provide a reason for rejection..."
+          rows="4"
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeRejectModal()">Cancel</button>
+        <button class="btn btn-danger" (click)="confirmReject()">Confirm Rejection</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="my-requests-container">
+  <div class="header">
+    <h2>My Club Requests</h2>
+    <p>Track the status of your club creation requests</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading your club requests...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <button (click)="loadMyClubRequests()" class="btn btn-primary">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && clubRequests.length === 0" class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>No Club Requests</h3>
+    <p>You haven't requested any clubs yet.</p>
+    <a routerLink="/clubs/request" class="btn btn-primary">Request a Club</a>
+  </div>
+
+  <!-- Requests List -->
+  <div *ngIf="!isLoading && !errorMessage && clubRequests.length > 0" class="requests-list">
+    <div *ngFor="let request of clubRequests" class="request-card">
+      <div class="request-header">
+        <div class="request-info">
+          <h3>{{ request.name }}</h3>
+          <p class="request-description" *ngIf="request.description">{{ request.description }}</p>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(request.status)">
+          {{ request.status }}
+        </span>
+      </div>
+
+      <div class="request-details">
+        <div class="detail-item">
+          <span class="detail-label">Requested:</span>
+          <span class="detail-value">{{ formatDate(request.createdAt) }}</span>
+        </div>
+
+        <div class="detail-item" *ngIf="request.reviewedAt">
+          <span class="detail-label">Reviewed:</span>
+          <span class="detail-value">{{ formatDate(request.reviewedAt) }}</span>
+        </div>
+
+        <div class="detail-item" *ngIf="request.reviewedBy">
+          <span class="detail-label">Reviewed By:</span>
+          <span class="detail-value">
+            {{ request.reviewedBy?.firstName }} {{ request.reviewedBy?.lastName }}
+          </span>
+        </div>
+
+        <div class="detail-item rejection-reason" *ngIf="request.status === 'rejected' && request.rejectionReason">
+          <span class="detail-label">Reason for Rejection:</span>
+          <span class="detail-value">{{ request.rejectionReason }}</span>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div class="status-message" *ngIf="request.status === 'pending'">
+        <p>⏳ Your request is pending review by an administrator.</p>
+      </div>
+
+      <div class="status-message success" *ngIf="request.status === 'approved'">
+        <p>✅ Your request has been approved! You are now the club admin.</p>
+        <a routerLink="/club/dashboard" class="btn btn-success">Go to Club Dashboard</a>
+      </div>
+
+      <div class="status-message error" *ngIf="request.status === 'rejected'">
+        <p>❌ Your request was rejected.</p>
+      </div>
+    </div>
+  </div>
+</div>

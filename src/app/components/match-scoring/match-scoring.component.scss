@@ -1,0 +1,263 @@
+.match-scoring-card {
+  margin: 16px;
+  max-width: 500px;
+  transition: all 0.3s ease;
+  
+  &.completed {
+    border: 2px solid #4caf50;
+    background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.match-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #333;
+  
+  .match-icon {
+    color: #ff6b35;
+  }
+}
+
+.completed-badge {
+  margin-top: 8px;
+  
+  mat-chip {
+    font-size: 12px;
+    background: #4caf50;
+    color: white;
+  }
+}
+
+.match-progress {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  
+  .progress-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  mat-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  
+  .progress-text {
+    font-size: 12px;
+    color: #888;
+    float: right;
+  }
+}
+
+.participants-container {
+  margin: 24px 0;
+}
+
+.participant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin: 8px 0;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  transition: all 0.3s ease;
+  
+  &.winner {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%);
+    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.3);
+  }
+}
+
+.participant-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  
+  .winner-icon {
+    color: #ffd700;
+    animation: bounce 1s infinite;
+  }
+  
+  .participant-name {
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
+  }
+}
+
+.score-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .score-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    
+    mat-icon {
+      font-size: 18px;
+    }
+  }
+  
+  .score-display {
+    .score-input {
+      width: 80px;
+      
+      input {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+    }
+  }
+}
+
+.vs-divider {
+  text-align: center;
+  margin: 16px 0;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e0e0e0;
+    z-index: 1;
+  }
+  
+  .vs-text {
+    background: white;
+    padding: 0 16px;
+    font-weight: bold;
+    color: #666;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.winner-announcement {
+  text-align: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  border-radius: 12px;
+  margin: 24px 0;
+  
+  .trophy-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: white;
+    margin-bottom: 8px;
+    animation: pulse 2s infinite;
+  }
+  
+  .winner-text {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .final-score {
+    display: block;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+  }
+}
+
+.match-actions {
+  text-align: center;
+  margin-top: 24px;
+  
+  button {
+    min-width: 140px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Animations
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .match-scoring-card {
+    margin: 8px;
+  }
+  
+  .participant-row {
+    padding: 12px;
+  }
+  
+  .participant-name {
+    font-size: 14px !important;
+  }
+  
+  .score-controls {
+    gap: 4px;
+    
+    .score-display .score-input {
+      width: 60px;
+      
+      input {
+        font-size: 18px;
+      }
+    }
+    
+    .score-btn {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+    }
+  }
+}

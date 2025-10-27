@@ -1,0 +1,152 @@
+<div class="public-standings-page">
+  <!-- Header Section -->
+  <app-public-tournament-header
+    [tournamentName]="tournament?.name || 'Tournament Standings'"
+    subtitle="Group Standings"
+    [actionButtons]="actionButtons">
+  </app-public-tournament-header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="loading-text">Loading standings...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="empty-state">
+    <div class="empty-icon-wrapper">
+      <mat-icon class="empty-icon">error_outline</mat-icon>
+    </div>
+    <h2>Unable to Load Standings</h2>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && groupAStandings.length === 0 && groupBStandings.length === 0" class="empty-state">
+    <div class="empty-icon-wrapper">
+      <mat-icon class="empty-icon">leaderboard</mat-icon>
+    </div>
+    <h2>No Standings Yet</h2>
+    <p>Standings will appear once matches have been completed.</p>
+  </div>
+
+  <!-- Standings Content -->
+  <div *ngIf="!loading && !error && (groupAStandings.length > 0 || groupBStandings.length > 0)" class="standings-container">
+
+    <!-- Group A Standings -->
+    <div class="standings-section" *ngIf="groupAStandings.length > 0">
+      <div class="section-header">
+        <div class="group-badge group-a">A</div>
+        <h2 class="section-title">Group A Standings</h2>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="team-col">Team</th>
+              <th class="stat-col">MP</th>
+              <th class="stat-col">W</th>
+              <th class="stat-col">L</th>
+              <th class="stat-col">GW</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let standing of groupAStandings"
+                [class.rank-1]="standing.rank === 1"
+                [class.rank-2]="standing.rank === 2"
+                [class.qualifying]="isQualifyingTeam(standing.rank)">
+              <td class="rank-col">
+                <div class="rank-number"
+                     [class.gold]="standing.rank === 1"
+                     [class.silver]="standing.rank === 2">
+                  {{ standing.rank }}
+                </div>
+              </td>
+              <td class="team-col">
+                <div class="team-name">{{ standing.teamName }}</div>
+              </td>
+              <td class="stat-col">{{ standing.matchesPlayed }}</td>
+              <td class="stat-col stat-wins">{{ standing.wins }}</td>
+              <td class="stat-col stat-losses">{{ standing.losses }}</td>
+              <td class="stat-col">
+                <div class="points-value">{{ standing.gamesWon }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Group B Standings -->
+    <div class="standings-section" *ngIf="groupBStandings.length > 0">
+      <div class="section-header">
+        <div class="group-badge group-b">B</div>
+        <h2 class="section-title">Group B Standings</h2>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="team-col">Team</th>
+              <th class="stat-col">MP</th>
+              <th class="stat-col">W</th>
+              <th class="stat-col">L</th>
+              <th class="stat-col">GW</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let standing of groupBStandings"
+                [class.rank-1]="standing.rank === 1"
+                [class.rank-2]="standing.rank === 2"
+                [class.qualifying]="isQualifyingTeam(standing.rank)">
+              <td class="rank-col">
+                <div class="rank-number"
+                     [class.gold]="standing.rank === 1"
+                     [class.silver]="standing.rank === 2">
+                  {{ standing.rank }}
+                </div>
+              </td>
+              <td class="team-col">
+                <div class="team-name">{{ standing.teamName }}</div>
+              </td>
+              <td class="stat-col">{{ standing.matchesPlayed }}</td>
+              <td class="stat-col stat-wins">{{ standing.wins }}</td>
+              <td class="stat-col stat-losses">{{ standing.losses }}</td>
+              <td class="stat-col">
+                <div class="points-value">{{ standing.gamesWon }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-section">
+      <mat-icon class="legend-icon">info</mat-icon>
+      <div class="legend-text">
+        <strong>MP:</strong> Matches Played &nbsp;•&nbsp;
+        <strong>W:</strong> Match Wins &nbsp;•&nbsp;
+        <strong>L:</strong> Match Losses &nbsp;•&nbsp;
+        <strong>GW:</strong> Games Won (sets won, e.g., 6-4, 6-3 = 12 games)
+        <br>
+        <small style="opacity: 0.8; margin-top: 4px; display: block;">
+          Tie-breaking order: 1) Games Won, 2) Match Wins, 3) Head-to-Head (2-way ties only), 4) Games Differential
+        </small>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer Branding -->
+  <div class="footer-branding" *ngIf="!loading">
+    <div class="branding-content">
+      <mat-icon class="branding-icon">sports_tennis</mat-icon>
+      <span class="branding-text">Powered by BracketAce</span>
+    </div>
+  </div>
+</div>

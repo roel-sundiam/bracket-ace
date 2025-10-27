@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bracket-ace
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist/bracket-ace/browser
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 18

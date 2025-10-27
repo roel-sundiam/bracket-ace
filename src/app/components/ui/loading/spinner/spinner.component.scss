@@ -1,0 +1,97 @@
+// Spinner Component Styles - Following BracketAce Design System
+@use '../../../../styles/design-tokens.scss' as *;
+
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.spinner-circle {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--neutral-200);
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-text {
+  font-size: var(--text-sm);
+  color: var(--neutral-600);
+  font-weight: var(--font-medium);
+}
+
+// === SIZE VARIANTS ===
+.spinner-sm .spinner-circle {
+  width: 16px;
+  height: 16px;
+  border-width: 1.5px;
+}
+
+.spinner-lg .spinner-circle {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.spinner-xl .spinner-circle {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+// === COLOR VARIANTS ===
+.spinner-primary .spinner-circle {
+  border-top-color: var(--primary-500);
+}
+
+.spinner-secondary .spinner-circle {
+  border-top-color: var(--secondary-500);
+}
+
+.spinner-white .spinner-circle {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+}
+
+// === ANIMATION ===
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// === CENTERED SPINNER ===
+.spinner-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+// === OVERLAY SPINNER ===
+.spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+// === REDUCED MOTION ===
+@media (prefers-reduced-motion: reduce) {
+  .spinner-circle {
+    animation: none;
+    border-top-color: var(--primary-500);
+    border-right-color: var(--primary-400);
+    border-bottom-color: var(--primary-300);
+    border-left-color: var(--primary-200);
+  }
+}

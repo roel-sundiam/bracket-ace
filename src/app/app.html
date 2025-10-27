@@ -1,0 +1,17 @@
+<!-- BracketAce Tennis Tournament Application -->
+<div class="app-container">
+  <!-- Navigation Header (hidden on public routes) -->
+  @if (!isPublicRoute()) {
+    <app-main-navigation></app-main-navigation>
+  }
+
+  <!-- Main Content Area -->
+  <main class="main-content" [class.public-page]="isPublicRoute()">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer (hidden on public routes) -->
+  @if (!isPublicRoute()) {
+    <app-footer></app-footer>
+  }
+</div>
