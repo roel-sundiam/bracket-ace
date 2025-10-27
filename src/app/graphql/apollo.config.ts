@@ -5,7 +5,10 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { AuthService } from '../services/auth.service';
 
-const uri = 'http://localhost:3001/graphql'; // GraphQL endpoint
+// Use environment variable or default to production backend
+const uri = typeof window !== 'undefined' && (window as any)['GRAPHQL_ENDPOINT']
+  ? (window as any)['GRAPHQL_ENDPOINT']
+  : 'https://bracket-ace-backend.onrender.com/graphql'; // Production GraphQL endpoint
 
 export function apolloOptionsFactory(): ApolloClientOptions<any> {
   // Create the HTTP link

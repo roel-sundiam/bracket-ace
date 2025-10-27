@@ -257,4 +257,5 @@ export class PublicTournamentHeaderComponent {
   @Input() count?: number;
   @Input() countLabel: string = '';
   @Input() actionButtons: ActionButton[] = [];
+  @Input() themeImageUrl?: string;
 }

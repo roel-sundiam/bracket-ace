@@ -6,7 +6,6 @@ import { AuthService } from '../../../services/auth.service';
 import { LoginInput } from '../../../graphql/types';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { InputComponent } from '../../ui/form/input/input.component';
-import { CardComponent } from '../../ui/card/card.component';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +15,7 @@ import { CardComponent } from '../../ui/card/card.component';
     ReactiveFormsModule,
     RouterLink,
     ButtonComponent,
-    InputComponent,
-    CardComponent
+    InputComponent
   ],
   template: `
     <!-- Modern Login Page -->
