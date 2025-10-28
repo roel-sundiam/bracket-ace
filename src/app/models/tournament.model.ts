@@ -66,6 +66,8 @@ export interface Match {
   completed: boolean;
   participant1Name?: string;
   participant2Name?: string;
+  scheduledDate?: Date | number; // Date object or Unix timestamp
+  scheduledTime?: string; // HH:MM format
   createdAt: Date;
   updatedAt: Date;
 }

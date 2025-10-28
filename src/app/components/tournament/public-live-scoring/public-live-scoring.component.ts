@@ -167,6 +167,11 @@ interface GroupMatrix {
               <div class="matches-list" *ngIf="upcomingMatches.length > 0">
                 <div *ngFor="let match of upcomingMatches" class="match-item">
                   <div class="match-badge">{{ getRoundName(match.round, match.bracketType) }}</div>
+                  <div class="match-schedule" *ngIf="match.scheduledDate || match.scheduledTime">
+                    <mat-icon>schedule</mat-icon>
+                    <span *ngIf="match.scheduledDate">{{ formatScheduleDate(match.scheduledDate) }}</span>
+                    <span *ngIf="match.scheduledTime" class="schedule-time">{{ match.scheduledTime }}</span>
+                  </div>
                   <div class="teams">
                     <span class="team-players" *ngIf="match.team1">
                       {{ match.team1.player1?.firstName }} & {{ match.team1.player2?.firstName }}
@@ -916,6 +921,29 @@ interface GroupMatrix {
       border-radius: 6px;
       font-weight: 600;
       font-size: 0.875rem;
+    }
+
+    .match-schedule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #e3f2fd;
+      border-radius: 8px;
+      color: #1976d2;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .match-schedule mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    .match-schedule .schedule-time {
+      font-weight: 600;
+      margin-left: 0.25rem;
     }
 
     .teams {
@@ -1858,16 +1886,25 @@ export class PublicLiveScoringComponent implements OnInit, OnDestroy {
     });
 
     this.liveMatches = enrichedMatches.filter(m => m.isLive);
-    // Filter out TBD matches (placeholder matches for knockout stage)
-    // Only show matches where both teams are found OR where participant IDs are actual teams (not 'TBD')
-    this.upcomingMatches = enrichedMatches.filter(m =>
-      !m.completed &&
-      !m.isLive &&
-      m.participant1 !== 'TBD' &&
-      m.participant2 !== 'TBD' &&
-      (m.team1 || m.participant1Name) &&
-      (m.team2 || m.participant2Name)
-    );
+
+    // Filter upcoming matches:
+    // - For round-robin tournaments: Show Finals (round 2+) even with TBD participants
+    // - For other matches: Only show if both participants are known
+    this.upcomingMatches = enrichedMatches.filter(m => {
+      if (m.completed || m.isLive) return false;
+
+      // For round-robin tournaments with groups, show knockout stage matches (round >= 2) even with TBD
+      if (this.isRoundRobin && this.tournament?.groupA && this.tournament?.groupB && m.round >= 2) {
+        return true;
+      }
+
+      // For all other matches, only show if both participants are known
+      return m.participant1 !== 'TBD' &&
+             m.participant2 !== 'TBD' &&
+             (m.team1 || m.participant1Name) &&
+             (m.team2 || m.participant2Name);
+    });
+
     this.completedMatches = enrichedMatches.filter(m => m.completed);
 
     // Detect tournament type and build results matrix if round-robin
@@ -1971,20 +2008,15 @@ export class PublicLiveScoringComponent implements OnInit, OnDestroy {
   }
 
   getRoundName(round: number, bracketType?: 'winners' | 'losers'): string {
-    // For round-robin tournaments with groups
-    if (this.isRoundRobin && this.tournament?.groupA && this.tournament?.groupB) {
-      // In round-robin with groups, the knockout stage typically has:
-      // - Round 2: Finals (winners bracket) and 3rd Place (losers/consolation bracket)
-      if (round === 2) {
-        return bracketType === 'losers' ? '3rd Place' : 'Finals';
-      }
-
+    // For round-robin tournaments
+    if (this.isRoundRobin) {
       const roundNames: { [key: number]: string } = {
-        0: 'Group Stage',
-        1: 'Group Stage',
+        0: 'Round Robin',
+        1: 'Elimination',
+        2: bracketType === 'losers' ? '3rd Place' : 'Finals',
         3: 'Finals'
       };
-      return roundNames[round] || `Knockout Round ${round}`;
+      return roundNames[round] || `Round ${round}`;
     }
 
     // For elimination brackets
@@ -1994,6 +2026,50 @@ export class PublicLiveScoringComponent implements OnInit, OnDestroy {
       3: 'Finals'
     };
     return roundNames[round] || `Round ${round}`;
+  }
+
+  formatScheduleDate(date: Date | string | number | undefined | null): string {
+    if (!date) return '';
+
+    // Handle Date objects, string dates, and numeric timestamps
+    let dateObj: Date;
+    if (typeof date === 'number') {
+      // Handle Unix timestamp (milliseconds)
+      dateObj = new Date(date);
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date);
+    } else if (date instanceof Date) {
+      dateObj = date;
+    } else {
+      return '';
+    }
+
+    // Validate date
+    if (isNaN(dateObj.getTime())) {
+      return '';
+    }
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Reset time to compare dates only
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const tomorrowDate = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
+    const compareDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+
+    if (compareDate.getTime() === todayDate.getTime()) {
+      return 'Today';
+    } else if (compareDate.getTime() === tomorrowDate.getTime()) {
+      return 'Tomorrow';
+    } else {
+      // Format as "Mon, Jan 15"
+      return dateObj.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
   }
 
   /**
@@ -2035,6 +2111,11 @@ export class PublicLiveScoringComponent implements OnInit, OnDestroy {
    * Round-robin: All teams play each other, matches don't follow strict bracket rounds
    */
   detectRoundRobin(): boolean {
+    // First check: If tournament has groups defined, it's round-robin
+    if (this.tournament?.groupA && this.tournament?.groupB) {
+      return true;
+    }
+
     if (this.matches.length === 0 || this.teams.length === 0) {
       return false;
     }
@@ -2056,23 +2137,6 @@ export class PublicLiveScoringComponent implements OnInit, OnDestroy {
     // In elimination brackets, rounds are 1, 2, 3 (QF, SF, F). In round-robin, rounds may not be used or be uniform
     const rounds = new Set(this.matches.map(m => m.round));
     const hasNonBracketStructure = rounds.size === 1 || rounds.has(0) || this.matches.every(m => m.round === 1);
-
-    // Additional check: In elimination, we typically have 4, 8, 16, 32 teams
-    // and match count follows power of 2 pattern. In round-robin, match count follows n*(n-1)/2
-    const isPowerOfTwo = (n: number) => n > 0 && (n & (n - 1)) === 0;
-    const likelyNotElimination = !isPowerOfTwo(this.teams.length) || hasRoundRobinMatchCount;
-
-    console.log('Round-robin detection:', {
-      teams: this.teams.length,
-      matches: this.matches.length,
-      uniqueMatchups: matchups.size,
-      expectedRoundRobin: expectedMatches,
-      hasRoundRobinMatchCount,
-      hasNonBracketStructure,
-      likelyNotElimination,
-      rounds: Array.from(rounds),
-      isRoundRobin: hasRoundRobinMatchCount && hasNonBracketStructure
-    });
 
     return hasRoundRobinMatchCount && hasNonBracketStructure;
   }

@@ -188,6 +188,12 @@ interface LiveMatch extends Match {
                   </button>
                 </div>
 
+                <div class="match-schedule" *ngIf="match.scheduledDate || match.scheduledTime">
+                  <mat-icon>schedule</mat-icon>
+                  <span *ngIf="match.scheduledDate">{{ formatScheduleDate(match.scheduledDate) }}</span>
+                  <span *ngIf="match.scheduledTime" class="schedule-time">{{ match.scheduledTime }}</span>
+                </div>
+
                 <div class="match-teams">
                   <div class="match-team">
                     <div class="team-name">{{ match.team1?.name || 'Team 1' }}</div>
@@ -552,6 +558,30 @@ interface LiveMatch extends Match {
       border-bottom: 1px solid #e0e0e0;
     }
 
+    .match-schedule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #e3f2fd;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      color: #1976d2;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .match-schedule mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    .match-schedule .schedule-time {
+      font-weight: 600;
+      margin-left: 0.25rem;
+    }
+
     .match-teams {
       display: flex;
       align-items: center;
@@ -649,14 +679,36 @@ export class LiveScoringComponent implements OnInit {
     this.allMatches().filter(m => m.isLive && !m.completed)
   );
 
-  upcomingMatches = computed(() =>
-    this.allMatches().filter(m =>
+  upcomingMatches = computed(() => {
+    const filtered = this.allMatches().filter(m =>
       !m.isLive &&
       !m.completed &&
       m.participant1 !== 'TBD' &&
       m.participant2 !== 'TBD'
-    )
-  );
+    );
+
+    // Sort by scheduled date/time in ascending order
+    return filtered.sort((a, b) => {
+      // Helper function to get timestamp for sorting
+      const getTimestamp = (match: LiveMatch): number => {
+        if (!match.scheduledDate) return Infinity; // Unscheduled matches go to end
+
+        const dateTimestamp = typeof match.scheduledDate === 'number'
+          ? match.scheduledDate
+          : new Date(match.scheduledDate).getTime();
+
+        // If there's a scheduledTime, parse it and add to the date
+        if (match.scheduledTime) {
+          const [hours, minutes] = match.scheduledTime.split(':').map(Number);
+          return dateTimestamp + (hours * 3600000) + (minutes * 60000);
+        }
+
+        return dateTimestamp;
+      };
+
+      return getTimestamp(a) - getTimestamp(b);
+    });
+  });
 
   completedMatches = computed(() =>
     this.allMatches().filter(m => m.completed)
@@ -696,6 +748,15 @@ export class LiveScoringComponent implements OnInit {
 
       const matches = matchesResult?.data?.matches || [];
 
+      // Debug: Log the first match to see schedule data
+      if (matches.length > 0) {
+        console.log('Sample match data:', {
+          id: matches[0].id,
+          scheduledDate: matches[0].scheduledDate,
+          scheduledTime: matches[0].scheduledTime
+        });
+      }
+
       // Map matches to LiveMatch format with team data
       const liveMatches: LiveMatch[] = matches.map(match => ({
         ...match,
@@ -732,6 +793,50 @@ export class LiveScoringComponent implements OnInit {
     }
     // For other rounds, show Winners/Consolation
     return match.bracketType === 'winners' ? 'Winners' : 'Consolation';
+  }
+
+  formatScheduleDate(date: Date | string | number | undefined | null): string {
+    if (!date) return '';
+
+    // Handle Date objects, string dates, and numeric timestamps
+    let dateObj: Date;
+    if (typeof date === 'number') {
+      // Handle Unix timestamp (milliseconds)
+      dateObj = new Date(date);
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date);
+    } else if (date instanceof Date) {
+      dateObj = date;
+    } else {
+      return '';
+    }
+
+    // Validate date
+    if (isNaN(dateObj.getTime())) {
+      return '';
+    }
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Reset time to compare dates only
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const tomorrowDate = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
+    const compareDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+
+    if (compareDate.getTime() === todayDate.getTime()) {
+      return 'Today';
+    } else if (compareDate.getTime() === tomorrowDate.getTime()) {
+      return 'Tomorrow';
+    } else {
+      // Format as "Mon, Jan 15"
+      return dateObj.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
   }
 
   startMatch(match: LiveMatch): void {
